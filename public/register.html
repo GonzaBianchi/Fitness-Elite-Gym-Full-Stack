@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" sizes="32x32"  href="./assets/img/favicons/favicon-16x16.png">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="theme-color" content="#ffffff">
+        <!-- <link rel="stylesheet" href="./assets/styles/styles.css"> -->
+        <link rel="stylesheet" href="./assets/styles/register.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/47e07fc3d8.js" crossorigin="anonymous"></script>
+
+        <title>Fitness Elite Gym</title>
+    </head>
+<body>
+    <header>
+        <nav>
+            <ul class="nav-bar">
+                <li class="logo"><a href="index.html"><img src="./assets/img/logos/logo2.jpg" alt="logo"></a></li>
+                <li class="menu">
+                    <a href="./index.html" class="navItem active">INICIO</a>
+                </li>
+            </ul>
+            <div class="buttonsLogInUp">
+                <button class="loginButton"><a href="./login.html" class="navItem">INICIAR SESIÓN</a></button>
+            </div>
+        </nav>
+    </header>
+    <main >
+        <form class="register"action="./api/sessions/register" method="POST">
+            <fieldset>
+                <legend>Registro</legend>
+            </fieldset>
+            <label for="name" class="label">
+                <input id="name" name="name" autocomplete="on" placeholder=" " class="input"></input>
+                <span class="labelName">Nombre</span>
+            </label>
+            <label for="lastname" class="label">
+                <input id="lastname" name="lastname" autocomplete="on" placeholder=" " class="input"></input>
+                <span class="labelName">Apellido</span>
+            </label>
+            <label for="dni" class="label">
+                <input id="dni" name="dni" autocomplete="on" placeholder=" " class="input"></input>
+                <span class="labelName">DNI</span>
+            </label>
+            <label for="age" class="label">
+                <input id="age" name="age" type="number" autocomplete="on" placeholder=" " class="input"></input>
+                <span class="labelName">Edad</span>
+            </label>
+            <label for="email" class="label">
+                <input id="email" name="email" type="email" autocomplete="on" placeholder=" " class="input"></input>
+                <span class="labelName">Email</span>
+            </label>
+            <label for="password" class="label">
+                <input id="password" name="password" type="password" autocomplete="on" placeholder=" " class="input"></input>
+                <span class="labelName">Contraseña</span>
+            </label>
+            <label for="password2" class="label">    
+                <input id="password2" name="password2" type="password" autocomplete="on" placeholder=" " class="input"></input>
+                <span class="labelName">Repetir contraseña</span>
+            </label>
+            <button class="signUp">Registrarse</button>
+        </form>
+    </main>
+    <footer>
+        <div class="foot">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-facebook"></i>
+            <i class="fab fa-twitter"></i>
+        </div>
+    </footer>
+</body>
+</html>
