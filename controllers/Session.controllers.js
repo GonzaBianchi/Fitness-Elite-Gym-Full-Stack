@@ -9,15 +9,15 @@ import UsersHelpers from '../helpers/users.helpers.js';
 
 export default class SessionControllers {
     constructor() {
-        if (process.argv[2] === 'dev') {
-            this.db = new UsersDaoMemory();
-        } else if (process.argv[2] === 'prod') {
+        // if (process.argv[2] === 'dev') {
+        //     this.db = new UsersDaoMemory();
+        // } else if (process.argv[2] === 'prod') {
             this.db = new UsersDaoMysql();
-        } else {
-            // Manejo de error si process.argv[2] no es válido
-            console.error('Modo de ejecución no especificado correctamente.');
-            throw new Error('Modo de ejecución no especificado correctamente.');
-        }
+        // } else {
+        //     // Manejo de error si process.argv[2] no es válido
+        //     console.error('Modo de ejecución no especificado correctamente.');
+        //     throw new Error('Modo de ejecución no especificado correctamente.');
+        // }
 
         this.userHelpers = new UsersHelpers();
     }

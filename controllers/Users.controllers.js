@@ -10,9 +10,9 @@ import UsersHelpers from '../helpers/users.helpers.js'
 export default class UsersControllers {
 
     constructor() {
-        if (process.argv[2] === 'dev')
-            this.db = new UsersDaoMemory()
-        if (process.argv[2] === 'prod')
+        // if (process.argv[2] === 'dev')
+        //     this.db = new UsersDaoMemory()
+        // if (process.argv[2] === 'prod')
             this.db = new UsersDaoMysql()
 
         this.userHelpers = new UsersHelpers()
