@@ -17,7 +17,6 @@ export default class PlansControllers {
      * @param {Response} res 
      */
     getAllPlans = async (req, res) => {
-        console.log('buscando los entrenadores')
         try {
             // Verificar y decodificar el token JWT del encabezado de autorización
             const token = req.headers.authorization.split(' ')[1]; // Obtener el token del encabezado
@@ -44,7 +43,6 @@ export default class PlansControllers {
     updatePlan = async (req, res) => {
         // const trainerId = req.params.id; // Obtener el ID del usuario de los parámetros de la URL
         const { idPlan, nombre, precio, duracion } = req.body;
-        console.log(req.body); // Datos actualizados del usuario: solo plan
     
         // Crear objeto con los datos a actualizar
         const planData = {};
@@ -78,8 +76,6 @@ export default class PlansControllers {
     
     deletePlan = async (req, res) => {
         const { id } = req.params
-        console.log('borrando')
-        console.log(id)
         const result = await this.db.deletePlan(id)
         res.json(result)
     }
