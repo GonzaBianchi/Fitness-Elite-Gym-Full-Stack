@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
-import UsersDaoMemory from '../db/daos/users.dao.memory.js';
 import UsersDaoMysql from '../db/daos/users.dao.mysql.js';
 import UsersHelpers from '../helpers/users.helpers.js';
 
@@ -9,64 +8,55 @@ import UsersHelpers from '../helpers/users.helpers.js';
 
 export default class SessionControllers {
     constructor() {
-        // if (process.argv[2] === 'dev') {
-        //     this.db = new UsersDaoMemory();
-        // } else if (process.argv[2] === 'prod') {
-            this.db = new UsersDaoMysql();
-        // } else {
-        //     // Manejo de error si process.argv[2] no es válido
-        //     console.error('Modo de ejecución no especificado correctamente.');
-        //     throw new Error('Modo de ejecución no especificado correctamente.');
-        // }
-
+        this.db = new UsersDaoMysql();
         this.userHelpers = new UsersHelpers();
     }
 
 
 
     register = async (req, res) => {
-        console.log(req.body);
+        console.log('Request body:', req.body);
         try {
             const { dni, name, lastname, email, age, password, password2 } = req.body;
+            console.log('Values:', { dni, name, lastname, email, age, password, password2 });
     
-            // Validar que no haya campos vacíos
             if (!dni || !name || !lastname || !email || !age || !password || !password2) {
+                console.log('Missing fields');
                 return res.status(400).json({ error: 'Todos los campos son obligatorios' });
             }
     
-            // Validar que la edad sea un número
             if (isNaN(age)) {
+                console.log('Age is not a number');
                 return res.status(400).json({ error: 'La edad debe ser un número' });
             }
     
-            // Validar que el dni sea un número
             if (isNaN(dni)) {
+                console.log('DNI is not a number');
                 return res.status(400).json({ error: 'El DNI debe ser un número' });
             }
     
-            // Verificar si el password y password2 son iguales
             if (password !== password2) {
+                console.log('Passwords do not match');
                 return res.status(400).json({ error: 'Las contraseñas no coinciden' });
             }
-            //Busco si el usuario existe en mi db
+    
             const userExist = await this.db.getUserByEmail(email);
-            console.log(userExist)
-            if(!userExist){
-            const hash = bcrypt.hashSync(password, 10); // Asegúrate de especificar el número de saltos
-    
-            const result = await this.db.addUser({ dni, name, lastname, email, age, password: hash }); // Aquí pasas 'hash' como password
-    
-            res.redirect('/login.html');
-            //res.status(200).json({ message: 'Usuario registrado correctamente', data: result });
-        }else{
-            res.status(400).json({ error: 'El email ya existe' });
-            //aca hay que enviar el error y enviarlo a login
-        }
+            if (!userExist) {
+                const hash = bcrypt.hashSync(password, 10);
+                const result = await this.db.addUser({ dni, name, lastname, email, age, password: hash });
+                console.log('User registered:', result);
+                return res.status(200).json({ message: 'Usuario registrado correctamente', data: result });
+            } else {
+                console.log('Email already exists');
+                return res.status(400).json({ error: 'Ya existe un usuario con ese email registrado' });
+            }
         } catch (error) {
             console.error('Error al registrar usuario:', error);
-            res.status(500).json({ error: 'Error interno del servidor' });
+            return res.status(500).json({ error: 'Error interno del servidor' });
         }
     };
+    
+    
     
     
     
@@ -75,17 +65,21 @@ export default class SessionControllers {
     login = async (req, res) => {
         const { email, password } = req.body;
         try {
+            if (!email || !password) {
+                console.log('Missing fields');
+                return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+            }
             if (email === process.env.ADMIN_EMAIL) {
                 // Validar la contraseña del administrador
                 const isAdminPasswordCorrect = (password === process.env.ADMIN_PW);
-    
+        
                 if (!isAdminPasswordCorrect) {
                     return res.status(401).json({ error: 'Usuario o Contraseña incorrecta' });
                 }
-    
+        
                 // Generar el token JWT para el administrador
                 const token = jwt.sign({ email: process.env.ADMIN_EMAIL, role: 'admin' }, process.env.JWT_SECRETKEY, { expiresIn: '1h' });
-    
+        
                 // Configura la cookie
                 res.cookie('token', token, {
                     httpOnly: true,
@@ -93,43 +87,43 @@ export default class SessionControllers {
                     sameSite: 'None',
                     maxAge: 3600000
                 });
-    
-                // Redirigir a la página del administrador
-                return res.redirect(`/admin.html?token=${token}`);
+        
+                return res.status(200).json({ message: 'Usuario admin logeado correctamente', token });
+               // return res.redirect(`/admin.html?token=${token}`);
             }
-    
+        
             // Busca el usuario por correo electrónico en la base de datos
             const user = await this.db.getUserByEmail(email);
-    
+        
             if (!user) {
-                return res.redirect(`/register.html`);
-               // return res.status(404).json({ error: 'No existe el usuario' });
+                return res.status(404).json({ error: 'No existe el usuario' });
             }
-    
+        
             // Compara la contraseña ingresada con la contraseña almacenada hasheada
             const passwordMatch = bcrypt.compareSync(password, user.password);
-    
+        
             if (!passwordMatch) {
                 return res.status(401).json({ error: 'Usuario o Contraseña incorrecta' });
             }
-    
+        
             // Generar el token JWT para el usuario
-            const token = jwt.sign({ email: user.email, id: user.dni }, process.env.JWT_SECRETKEY, { expiresIn: '1h' });
-    
+            const tokenuser = jwt.sign({ email: user.email, id: user.dni }, process.env.JWT_SECRETKEY, { expiresIn: '1h' });
+        
             // Configura la cookie
-            res.cookie('token', token, {
+            res.cookie('token', tokenuser, {
                 httpOnly: true,
                 secure: true,
                 sameSite: 'None',
                 maxAge: 3600000
             });
-    
-            // Redirigir a la página del usuario
-            res.redirect(`/profile.html?token=${token}`);
+        
+            return res.status(200).json({ message: 'Usuario logeado correctamente', tokenuser });
         } catch (error) {
+            console.error('Error en el servidor:', error);
             return res.status(500).json({ error: 'Error en el servidor' });
         }
     };
+    
 
     
 

@@ -33,9 +33,76 @@
         <h1>Perfil de Usuario</h1>
       
         <div id="userProfile">
-          <!-- Aquí se mostrarán los datos del usuario que traemos desde-->
+            <div class="userProfileContainer">
+
+            </div>
+            <div class="userClassContainer">
+                <h2>Clases</h2>
+                <div class="form-class">
+                    <label for="class">Seleccionar una clase:</label>
+                    <select id="class" name="class" required>
+                        <option value="6">Boxeo</option>
+                        <option value="5">Boxeo Sauna</option>
+                        <option value="7">Yoga</option>
+                        <option value="8">BodyBuilding</option>
+                    </select>
+                    <button class="addUserClass" >Agregar clase</button>
+                </div>
+                <div class="userClassDisplay">
+                    <table class="userClass">
+                        <tr>
+                            <th>Clase</th>
+                            <th>Profesor</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                            <th>Acción</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </main>
+    <div class="editUserFormContainer">
+        <form id="editUserForm" class="editUserForm" enctype="multipart/form-data" method="PUT" >
+            <input type="hidden" id="idUser" name="idUser" value="${user.iduser}">
+            <label for="name" class="label">
+                <input id="name" name="name" autocomplete="on" placeholder=" " class="input">
+                <span class="labelName">Nombre</span>
+            </label>
+            <label for="lastname" class="label">
+                <input id="lastname" name="lastname" autocomplete="on" placeholder=" " class="input">
+                <span class="labelName">Apellido</span>
+            </label>
+            <label for="age" class="label">
+                <input id="age" name="age" type="number" autocomplete="on" placeholder=" " class="input">
+                <span class="labelName">Edad</span>
+            </label>
+            <label for="plan" class="label">
+                <select id="plan" name="plan" class="input">
+                    <option value="1">Básico</option>
+                    <option value="2">Gold</option>
+                    <option value="3">Platinum</option>
+                </select>
+                <span class="labelName">Plan</span>
+            </label>
+            <label for="password" class="label">
+                <input id="password" name="password" type="password" autocomplete="on" placeholder=" " class="input">
+                <span class="labelName">Contraseña nueva</span>
+            </label>
+            <label for="password2" class="label">
+                <input id="password2" name="password2" type="password" autocomplete="on" placeholder=" " class="input">
+                <span class="labelName">Repetir contraseña</span>
+            </label>
+            <div class="createFormImg">
+                <label for="avatar">Adjuntar fotografía:</label>
+                <input type="file" id="avatar" name="avatar" accept="image/*">
+            </div>
+            <div class="editFormButtons">
+                <input type="submit" value="Editar" class="editUserButton">
+                <button type="button" class="cancelEdit">Cancelar</button>
+            </div>
+        </form>
+    </div>
     <footer>
         <div class="foot">
             <i class="fab fa-instagram"></i>

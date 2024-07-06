@@ -24,13 +24,19 @@ export default class UsersDaoMysql extends MySql {
     }
 
     async getAllUsers() {
-        const query = `SELECT * FROM ${this.table}`;
+        const query = `SELECT u.*, p.nombre AS nombre_plan 
+        FROM ${this.table} u 
+        INNER JOIN plan p ON u.fk_idplan = p.idplan`;
         const [result] = await this.connection.promise().query(query);
         return result;
     }
 
     async getUserByEmail(email) {
-        const query = `SELECT * FROM ${this.table} WHERE email = ?`;
+        const query = `
+            SELECT u.*, p.nombre AS nombre_plan 
+            FROM ${this.table} u 
+            LEFT JOIN plan p ON u.fk_idplan = p.idplan 
+            WHERE u.email = ?`;
         try {
             const [rows, fields] = await this.connection.promise().query(query, [email]);
             if (rows.length > 0) {
@@ -43,6 +49,7 @@ export default class UsersDaoMysql extends MySql {
             throw error;
         }
     }
+    
 /**
  * Agrega el usuario a la bd
  * @param {{name:string, email:string, age:int, password:string}} user Datos recibidos del usuario
@@ -61,23 +68,34 @@ export default class UsersDaoMysql extends MySql {
     }
    
     async updateUser(userId, dataToUpdate) {
-        const { plan, imagen } = dataToUpdate;
-        console.log('imagen',imagen)
+        const { name, lastname, age, plan, password, imagen } = dataToUpdate;
         console.log('data a actualizar', dataToUpdate);
     
         const updateFields = [];
         const queryParams = [];
-    
+        
+        if (name !== undefined) {
+            updateFields.push('name = ?');
+            queryParams.push(name);
+        }
+        if (lastname !== undefined) {
+            updateFields.push('lastname = ?');
+            queryParams.push(lastname);
+        }
+        if (age !== undefined) {
+            updateFields.push('age = ?');
+            queryParams.push(age);
+        }
         if (plan !== undefined) {
             updateFields.push('fk_idplan = ?');
             queryParams.push(plan);
         }
-    
+        if (password !== undefined) {
+            updateFields.push('password = ?');
+            queryParams.push(password);
+        }
         if (imagen !== undefined) {
-            if (imagen === '') {
-                updateFields.push('imagen = ?');
-                queryParams.push('assets/img/users/persona.jpg'); // Ruta de imagen por defecto si no se proporciona ninguna
-            } else {
+            if (imagen !== '') {
                 updateFields.push('imagen = ?');
                 queryParams.push(imagen);
             }
@@ -95,18 +113,21 @@ export default class UsersDaoMysql extends MySql {
         }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-
     async deleteUser(id) {
         const query = `DELETE FROM ${this.table} WHERE iduser = ?`;
         const [result] = await this.connection.promise().query(query, [id]);
         return result;
     }
+
+    async addclass(id, classId) {
+        const query = `INSERT INTO usersClass (iduser, idclase) VALUES (?, ?)`;
+        try {
+            const [result] = await this.connection.promise().query(query, [id, classId]);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    
 }
